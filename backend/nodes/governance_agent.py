@@ -3,7 +3,7 @@ import json
 from openai import OpenAI
 from classes.state import ESGState
 import requests
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = ""
 
 headers = {
   'Authorization': f'Bearer {OPENROUTER_API_KEY}',
@@ -16,9 +16,6 @@ class GovernanceAgent:
     def __init__(self, model: str = "gpt-4.1-nano"):
         # Check for API key during initialization
 
-        # Initialize OpenAI client
-        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.model = model
 
         # System prompt chứa quy tắc chấm điểm G1, G2
         self.system_prompt = """
@@ -105,7 +102,20 @@ LƯU Ý:
                 }
             })
 
-            content = response.json()['choices'][0]['message']['content']
+            # Add proper response validation
+            if response.status_code != 200:
+                raise Exception(f"OpenRouter API error: {response.status_code} - {response.text}")
+            
+            response_data = response.json()
+            
+            # Check if response has the expected structure
+            if 'choices' not in response_data:
+                raise Exception(f"Invalid API response structure: {response_data}")
+            
+            if not response_data['choices'] or 'message' not in response_data['choices'][0]:
+                raise Exception(f"Invalid choices structure: {response_data}")
+            
+            content = response_data['choices'][0]['message']['content']
 
             # Chuyển chuỗi JSON từ LLM thành dict Python
             try:

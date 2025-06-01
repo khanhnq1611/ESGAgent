@@ -3,7 +3,7 @@ import json
 from openai import OpenAI
 import os
 import requests
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = ""
 
 headers = {
   'Authorization': f'Bearer {OPENROUTER_API_KEY}',
@@ -51,8 +51,6 @@ LƯU Ý:
 - Sử dụng tiếng Việt tự nhiên, chuyên nghiệp
 """
         
-        self.model = model
-        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def process(self, state: ESGState) -> ESGState:
         try:

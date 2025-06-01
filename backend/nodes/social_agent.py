@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from classes.state import ESGState
 import requests
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = ""
 
 headers = {
   'Authorization': f'Bearer {OPENROUTER_API_KEY}',
@@ -23,12 +23,7 @@ class SocialAgent:
     """
 
     def __init__(self, model: str = "gpt-4.1-nano"):
-        # Check for API key during initialization
-        if "OPENAI_API_KEY" not in os.environ:
-            raise RuntimeError("Bạn cần đặt biến môi trường OPENAI_API_KEY trước khi chạy.")
-        
-        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.model = model
+
 
         # System prompt chứa đầy đủ quy tắc chấm điểm S1, S2
         self.system_prompt = """
