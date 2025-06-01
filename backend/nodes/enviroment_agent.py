@@ -19,7 +19,7 @@ class EnvironmentAgent:
     System prompt chứa quy tắc chấm điểm E1, E2, E3.
     """
 
-    def __init__(self, model: str = "gpt-4.1-nano"):
+    def __init__(self):
         # Check for API key during initialization
 
         # System prompt chứa đầy đủ quy tắc chấm điểm

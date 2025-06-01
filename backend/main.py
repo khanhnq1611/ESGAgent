@@ -41,26 +41,6 @@ def esg_workflow():
     
     return workflow.compile()
 
-def run_esg_analysis(transaction_data, sender_info, receiver_info):
-    """
-    Run ESG analysis with provided data
-    Returns the final state after analysis
-    """
-    # Initialize the ESG workflow
-    workflow = esg_workflow()
-
-    # Create initial state with provided data
-    initial_state: ESGState = {
-        "transaction_data": transaction_data,
-        "receiver_info": receiver_info,
-        "sender_info": sender_info,
-        "total_esg_score": 0.0,
-        "analysis_results": {},
-        "errors": []
-    }
-
-    # Run the workflow and return final state
-    return workflow.invoke(initial_state)
 
 def main():
     # Initialize the ESG workflow

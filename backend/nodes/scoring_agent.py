@@ -14,7 +14,7 @@ class ScoringAgent:
     Agent tính tổng điểm ESG (E + S + G), phân loại, cập nhật va viet bao cao ve diem ESG cua giao dich do vào state.
     """
 
-    def __init__(self, model: str = "gpt-4.1-nano"):
+    def __init__(self):
         # Phân loại tổng điểm ESG
         # Lưu ý: khoảng điểm là [min, max], bao gồm cả min và max
         self.classifications = {
@@ -31,11 +31,11 @@ Nhiệm vụ của bạn là tạo báo cáo tổng hợp và đưa ra lời khu
 
 Yêu cầu:
 1. Viết một báo cáo tổng hợp (report) ngắn gọn, chuyên nghiệp về điểm ESG
-2. Đưa ra 3-5 lời khuyên cụ thể (advises) để cải thiện điểm ESG trong tương lai
+2. Đưa ra 4 lời khuyên cụ thể (advises) để cải thiện điểm ESG trong tương lai
 
 Trả về kết quả ở định dạng JSON như sau:
 {
-  "report": "Báo cáo tổng hợp ngắn gọn về điểm ESG của giao dịch này...",
+  "general_evaluation": "Viết một báo cáo ngắn khoảng 100 từ bằng tiếng Việt, mô tả kết quả đánh giá ESG của một giao dịch chuyển tiền cho tổ chức từ thiện. Văn phong khách quan, rõ ràng, mang tính tổng hợp. Nhấn mạnh điểm tích cực ở từng tiêu chí (môi trường, xã hội, quản trị), nêu điểm còn hạn chế nếu có. Tránh chỉ liệt kê số điểm, hãy viết như một đoạn báo cáo chuyên nghiệp.",
   "advises": [
     "Lời khuyên 1 để cải thiện điểm Environment...",
     "Lời khuyên 2 để cải thiện điểm Social...",
@@ -46,7 +46,6 @@ Trả về kết quả ở định dạng JSON như sau:
 
 LƯU Ý:
 - Chỉ trả về JSON thuần, không có văn bản giải thích thêm
-- Báo cáo nên ngắn gọn, súc tích (khoảng 100 từ)
 - Lời khuyên phải cụ thể và có thể thực hiện được
 - Sử dụng tiếng Việt tự nhiên, chuyên nghiệp
 """
@@ -82,7 +81,7 @@ LƯU Ý:
             state["analysis_results"]["breakdown"]["total"] = total_esg
 
             # 6. Generate report and advises using LLM
-            self._generate_report_and_advises(state, e, s, g, total_esg, classification, 
+            self._generate_evaluation_and_advises(state, e, s, g, total_esg, classification, 
                                             explaination_e, explaination_s, explaination_g)
             
             return state
@@ -94,7 +93,7 @@ LƯU Ý:
             state["errors"].append(f"ScoringAgent error: {str(ex)}")
             return state
 
-    def _generate_report_and_advises(self, state: ESGState, e: float, s: float, g: float, 
+    def _generate_evaluation_and_advises(self, state: ESGState, e: float, s: float, g: float, 
                                    total_esg: float, classification: str, 
                                    explaination_e: str, explaination_s: str, explaination_g: str):
         """Sử dụng LLM để tạo báo cáo và lời khuyên"""
@@ -139,14 +138,14 @@ LƯU Ý:
             # Parse JSON response
             try:
                 result = json.loads(content)
-                state["report"] = result.get("report", "Không thể tạo báo cáo")
+                state["general_evaluation"] = result.get("general_evaluation", "Không thể tạo báo cáo")
                 state["advises"] = result.get("advises", ["Không thể tạo lời khuyên"])
             except json.JSONDecodeError as e:
                 if "errors" not in state:
                     state["errors"] = []
                 state["errors"].append(f"Parsing JSON error in report generation: {str(e)}")
                 # Fallback values
-                state["report"] = f"Giao dịch này đạt điểm ESG {total_esg:.2f}/10.0, được đánh giá {classification}. Cần cải thiện các tiêu chí để đạt hiệu quả bền vững tốt hơn."
+                state["general_evaluation"] = f"Giao dịch này đạt điểm ESG {total_esg:.2f}/10.0, được đánh giá {classification}. Cần cải thiện các tiêu chí để đạt hiệu quả bền vững tốt hơn."
                 state["advises"] = [
                     "Tìm hiểu các chứng chỉ môi trường để cải thiện điểm E",
                     "Ưu tiên giao dịch với các tổ chức có tác động xã hội tích cực",
@@ -159,6 +158,6 @@ LƯU Ý:
                 state["errors"] = []
             state["errors"].append(f"LLM report generation error: {str(e)}")
             # Set default values
-            state["report"] = f"Giao dịch đạt điểm ESG {total_esg:.2f}/10.0"
+            state["general_evaluation"] = f"Giao dịch đạt điểm ESG {total_esg:.2f}/10.0"
             state["advises"] = ["Cải thiện các tiêu chí ESG để đạt hiệu quả bền vững tốt hơn"]
 

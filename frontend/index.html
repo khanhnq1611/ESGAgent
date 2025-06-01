@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Form Gửi Dữ Liệu ESG</title>
+</head>
+<body>
+  <h2>Form Gửi Dữ Liệu ESG</h2>
+  <form id="esg-form">
+    <!-- Transaction Data -->
+    <fieldset>
+      <legend>Transaction Data</legend>
+      <label for="transaction_id">Transaction ID:</label>
+      <input type="text" id="transaction_id" name="transaction_id" lang="en" required /><br /><br />
+
+      <label for="transaction_description">Mô tả giao dịch:</label>
+      <input type="text" id="transaction_description" name="transaction_description" lang="vi" placeholder="Có thể nhập tiếng Việt hoặc tiếng Anh" required /><br /><br />
+
+      <label for="payment_method">Phương thức thanh toán:</label>
+      <input type="text" id="payment_method" name="payment_method" lang="vi" placeholder="VD: Thẻ tín dụng, Chuyển khoản" required /><br /><br />
+
+      <label for="amount">Số tiền (VND):</label>
+      <input type="number" id="amount" name="amount" required /><br /><br />
+
+      <label for="aml_flag">AML Flag:</label>
+      <input type="text" id="aml_flag" name="aml_flag" lang="en" required /><br /><br />
+    </fieldset>
+
+    <!-- Sender Info -->
+    <fieldset>
+      <legend>Sender Info</legend>
+      <label for="sender_name">Tên người gửi:</label>
+      <input type="text" id="sender_name" name="sender_name" lang="vi" placeholder="Nhập tên tiếng Việt hoặc tiếng Anh" required /><br /><br />
+
+      <label for="sender_kyc_status">KYC Status (sender):</label>
+      <input type="text" id="sender_kyc_status" name="sender_kyc_status" lang="en" placeholder="VD: Verified, Pending" required /><br /><br />
+    </fieldset>
+
+    <!-- Receiver Info -->
+    <fieldset>
+      <legend>Receiver Info</legend>
+      <label for="receiver_name">Tên người nhận:</label>
+      <input type="text" id="receiver_name" name="receiver_name" lang="vi" placeholder="Nhập tên tiếng Việt hoặc tiếng Anh" required /><br /><br />
+
+      <label for="receiver_business_type">Loại hình kinh doanh:</label>
+      <input type="text" id="receiver_business_type" name="receiver_business_type" lang="vi" placeholder="VD: Công ty TNHH, Manufacturing" required /><br /><br />
+
+      <label for="receiver_kyc_status">KYC Status (receiver):</label>
+      <input type="text" id="receiver_kyc_status" name="receiver_kyc_status" lang="en" placeholder="VD: Verified, Pending" required /><br /><br />
+
+      <label for="receiver_environmental_certificates">Environmental Certificates (nếu có, cách nhau dấu phẩy):</label>
+      <input type="text" id="receiver_environmental_certificates" name="receiver_environmental_certificates" lang="vi" placeholder="VD: ISO 14001, Green Certificate" /><br /><br />
+
+      <label for="receiver_business_license">Business License:</label>
+      <input type="text" id="receiver_business_license" name="receiver_business_license" lang="en" required /><br /><br />
+
+      <label for="receiver_tax_code">Tax Code:</label>
+      <input type="text" id="receiver_tax_code" name="receiver_tax_code" lang="en" required /><br /><br />
+
+      <label for="receiver_company_size">Company Size:</label>
+      <input type="text" id="receiver_company_size" name="receiver_company_size" lang="en" placeholder="VD: Small, Medium, Large" required /><br /><br />
+    </fieldset>
+
+    <button type="submit">Gửi lên Backend</button>
+  </form>
+
+  <hr />
+
+  <h2>Kết quả từ Backend</h2>
+  <pre id="response-output" style="background: #f0f0f0; padding: 1em;"></pre>
+
+  <script>
+    document
+      .getElementById("esg-form")
+      .addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        // Lấy dữ liệu từ form
+        const data = {
+          transaction_data: {
+            transaction_id: document.getElementById("transaction_id").value,
+            transaction_description: document.getElementById("transaction_description").value,
+            payment_method: document.getElementById("payment_method").value,
+            amount: Number(document.getElementById("amount").value),
+            aml_flag: document.getElementById("aml_flag").value,
+          },
+          sender_info: {
+            sender_name: document.getElementById("sender_name").value,
+            kyc_status: document.getElementById("sender_kyc_status").value,
+          },
+          receiver_info: {
+            receiver_name: document.getElementById("receiver_name").value,
+            business_type: document.getElementById("receiver_business_type").value,
+            kyc_status: document.getElementById("receiver_kyc_status").value,
+            environmental_certificates: document
+              .getElementById("receiver_environmental_certificates")
+              .value
+              .split(",")
+              .map((s) => s.trim())
+              .filter((s) => s.length > 0),
+            business_license: document.getElementById("receiver_business_license").value,
+            tax_code: document.getElementById("receiver_tax_code").value,
+            company_size: document.getElementById("receiver_company_size").value,
+          },
+        };
+
+        try {
+          // Use relative URL or detect current host
+          const apiUrl = window.location.origin + "/api/esg";
+          
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+          const result = await response.json();
+
+          // Hiển thị kết quả trả về của backend
+          document.getElementById("response-output").textContent =
+            JSON.stringify(result, null, 2);
+        } catch (err) {
+          document.getElementById("response-output").textContent =
+            "Có lỗi khi kết nối tới backend:\n" + err;
+        }
+      });
+  </script>
+</body>
+</html>

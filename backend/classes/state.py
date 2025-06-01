@@ -26,7 +26,7 @@ class ESGState(TypedDict, total=False):
     receiver_info: Annotated[Dict[str, Any], take_last]
     total_esg_score: Annotated[float, take_last]
     analysis_results: Annotated[Dict[str, Any], merge_dicts]
-    report: NotRequired[Annotated[str, take_last]]
+    general_evaluation: NotRequired[Annotated[str, take_last]]
     advises: NotRequired[Annotated[List[str], add]]
     errors: Annotated[List[str], add]
 
