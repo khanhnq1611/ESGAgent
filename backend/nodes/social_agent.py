@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from classes.state import ESGState
 import requests
-OPENROUTER_API_KEY = ""
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 
 headers = {
   'Authorization': f'Bearer {OPENROUTER_API_KEY}',

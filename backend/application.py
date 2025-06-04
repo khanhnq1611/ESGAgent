@@ -7,10 +7,14 @@ from classes.state import ESGState
 
 app = Flask(__name__)
 
-# Configure CORS more specifically
-CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000"], 
-     methods=["GET", "POST", "OPTIONS"], 
-     allow_headers=["Content-Type", "Authorization"])
+# Configure CORS - allow all origins for development
+CORS(app, resources={
+    r"/api/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 
 # Redirect root to Next.js frontend or serve a simple info page
 @app.route("/")
@@ -29,6 +33,16 @@ def index():
 @app.route("/health")
 def health():
     return jsonify({"status": "OK", "service": "ESG Agent Backend"})
+
+# Add test endpoint for frontend connection checking
+@app.route("/api/test", methods=["GET"])
+def test_connection():
+    return jsonify({
+        "status": "OK", 
+        "message": "Backend is running",
+        "service": "ESG Agent Backend",
+        "port": 5000
+    })
 
 @app.route("/api/esg", methods=["POST", "OPTIONS"])
 def process_esg():
@@ -64,19 +78,27 @@ def process_esg():
         print(json.dumps(data, ensure_ascii=False, indent=2))
         print("====================================")
         
-       
-        # Uncomment this when esg_workflow is working properly
+        # Initialize required fields in the state
+        initial_state: ESGState = {
+            **data,
+            "total_esg_score": 0.0,
+            "analysis_results": {},
+            "general_evaluation": "",
+            "advises": [],
+            "errors": []
+        }
+        
+        # Run the ESG workflow
         work_flow = esg_workflow()
-        initial_state: ESGState = data
         finally_state = work_flow.invoke(initial_state)
         
-        if "advises" not in finally_state or "analysis_results" not in finally_state:
-            print("ERROR: Missing required fields in final state")
-            print("Final state keys:", list(finally_state.keys()))
-            return jsonify({
-                "success": False,
-                "error": "Analysis incomplete - missing required data"
-            }), 500
+        # Validate the final state has required fields
+        if "advises" not in finally_state:
+            finally_state["advises"] = []
+        if "analysis_results" not in finally_state:
+            finally_state["analysis_results"] = {}
+        if "general_evaluation" not in finally_state:
+            finally_state["general_evaluation"] = ""
         
         result_data = {
             "advises": finally_state.get("advises", []),

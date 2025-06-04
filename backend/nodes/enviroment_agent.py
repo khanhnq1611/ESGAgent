@@ -5,7 +5,7 @@ import json
 from openai import OpenAI
 from classes.state import ESGState
 import requests
-OPENROUTER_API_KEY = ""
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 
 headers = {
   'Authorization': f'Bearer {OPENROUTER_API_KEY}',

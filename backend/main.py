@@ -10,36 +10,40 @@ from langgraph.graph import StateGraph, END
 
 def esg_workflow():
     """Creates and returns the compiled ESG workflow"""
-    # Initialize workflow
-    data_agent = data_ingestion.DataIngestionAgent()
-    env_agent = enviroment_agent.EnvironmentAgent()
-    soc_agent = social_agent.SocialAgent()
-    gov_agent = governance_agent.GovernanceAgent()
-    score_agent = scoring_agent.ScoringAgent()
+    try:
+        # Initialize workflow
+        data_agent = data_ingestion.DataIngestionAgent()
+        env_agent = enviroment_agent.EnvironmentAgent()
+        soc_agent = social_agent.SocialAgent()
+        gov_agent = governance_agent.GovernanceAgent()
+        score_agent = scoring_agent.ScoringAgent()
 
-    # Create the workflow
-    workflow = StateGraph(ESGState) 
+        # Create the workflow
+        workflow = StateGraph(ESGState) 
 
-    # add nodes to the workflow
-    workflow.add_node("data_ingestion", data_agent.process)
-    workflow.add_node("environment_agent", env_agent.process)
-    workflow.add_node("social_agent", soc_agent.process)
-    workflow.add_node("governance_agent", gov_agent.process)
-    workflow.add_node("scoring_agent", score_agent.process)
-    
-    # Define the workflow structure - run in parallel now that concurrent updates are handled
-    workflow.add_edge("data_ingestion", "environment_agent")
-    workflow.add_edge("data_ingestion", "social_agent")
-    workflow.add_edge("data_ingestion", "governance_agent")
-    workflow.add_edge("environment_agent", "scoring_agent")
-    workflow.add_edge("social_agent", "scoring_agent")
-    workflow.add_edge("governance_agent", "scoring_agent")
-    workflow.add_edge("scoring_agent", END)
-    
-    # Set the entry point
-    workflow.set_entry_point("data_ingestion")
-    
-    return workflow.compile()
+        # add nodes to the workflow
+        workflow.add_node("data_ingestion", data_agent.process)
+        workflow.add_node("environment_agent", env_agent.process)
+        workflow.add_node("social_agent", soc_agent.process)
+        workflow.add_node("governance_agent", gov_agent.process)
+        workflow.add_node("scoring_agent", score_agent.process)
+        
+        # Define the workflow structure - run in parallel now that concurrent updates are handled
+        workflow.add_edge("data_ingestion", "environment_agent")
+        workflow.add_edge("data_ingestion", "social_agent")
+        workflow.add_edge("data_ingestion", "governance_agent")
+        workflow.add_edge("environment_agent", "scoring_agent")
+        workflow.add_edge("social_agent", "scoring_agent")
+        workflow.add_edge("governance_agent", "scoring_agent")
+        workflow.add_edge("scoring_agent", END)
+        
+        # Set the entry point
+        workflow.set_entry_point("data_ingestion")
+        
+        return workflow.compile()
+    except Exception as e:
+        print(f"Error creating workflow: {str(e)}")
+        raise e
 
 
 def main():

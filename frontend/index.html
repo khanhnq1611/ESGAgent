@@ -1,131 +1,238 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Form Gửi Dữ Liệu ESG</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESG Evaluation System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h2>Form Gửi Dữ Liệu ESG</h2>
-  <form id="esg-form">
-    <!-- Transaction Data -->
-    <fieldset>
-      <legend>Transaction Data</legend>
-      <label for="transaction_id">Transaction ID:</label>
-      <input type="text" id="transaction_id" name="transaction_id" lang="en" required /><br /><br />
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-leaf"></i> ESG Agent</h1>
+            <p>Environmental, Social & Governance Assessment Platform</p>
+            <div class="connection-status" id="connection-status">
+                <i class="fas fa-circle"></i> <span>Checking backend connection...</span>
+            </div>
+        </header>
 
-      <label for="transaction_description">Mô tả giao dịch:</label>
-      <input type="text" id="transaction_description" name="transaction_description" lang="vi" placeholder="Có thể nhập tiếng Việt hoặc tiếng Anh" required /><br /><br />
+        <div class="main-content">
+            <!-- Input Section -->
+            <div class="input-section">
+                <h2><i class="fas fa-plus-circle"></i> Transaction Input</h2>
+                <div class="backend-notice" id="backend-notice" style="display: none;">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Backend Status:</strong> <span id="backend-status-text">Unknown</span>
+                </div>
+                <form id="esg-form">
+                    <div class="form-group">
+                        <h3>Transaction Information</h3>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="transaction_id">Transaction ID</label>
+                                <input type="text" id="transaction_id" placeholder="TXN_001">
+                            </div>
+                            <div class="form-field">
+                                <label for="amount">Amount (VND)</label>
+                                <input type="number" id="amount" placeholder="1000000">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field full-width">
+                                <label for="description">Transaction Description</label>
+                                <textarea id="description" placeholder="ủng hộ quỹ từ thiện mua xe điện cho bệnh viện"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="payment_method">Payment Method</label>
+                                <select id="payment_method">
+                                    <option value="mobile banking">Mobile Banking</option>
+                                    <option value="internet banking">Internet Banking</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="card">Card</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="aml_flag">AML Status</label>
+                                <select id="aml_flag">
+                                    <option value="clean">Clean</option>
+                                    <option value="flagged">Flagged</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-      <label for="payment_method">Phương thức thanh toán:</label>
-      <input type="text" id="payment_method" name="payment_method" lang="vi" placeholder="VD: Thẻ tín dụng, Chuyển khoản" required /><br /><br />
+                    <div class="form-group">
+                        <h3>Sender Information</h3>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="sender_name">Sender Name</label>
+                                <input type="text" id="sender_name" placeholder="Nguyen Van A">
+                            </div>
+                            <div class="form-field">
+                                <label for="sender_kyc">KYC Status</label>
+                                <select id="sender_kyc">
+                                    <option value="verified">Verified</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="failed">Failed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-      <label for="amount">Số tiền (VND):</label>
-      <input type="number" id="amount" name="amount" required /><br /><br />
+                    <div class="form-group">
+                        <h3>Receiver Information</h3>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="receiver_name">Receiver Name</label>
+                                <input type="text" id="receiver_name" placeholder="Bệnh viện Nhi Trung Ương">
+                            </div>
+                            <div class="form-field">
+                                <label for="business_type">Business Type</label>
+                                <select id="business_type">
+                                    <option value="healthcare charity">Healthcare Charity</option>
+                                    <option value="education">Education</option>
+                                    <option value="environmental">Environmental</option>
+                                    <option value="commercial">Commercial</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="receiver_kyc">KYC Status</label>
+                                <select id="receiver_kyc">
+                                    <option value="verified">Verified</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="failed">Failed</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="company_size">Company Size</label>
+                                <select id="company_size">
+                                    <option value="large">Large</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="small">Small</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="business_license">Business License</label>
+                                <input type="text" id="business_license" placeholder="123456789">
+                            </div>
+                            <div class="form-field">
+                                <label for="tax_code">Tax Code</label>
+                                <input type="text" id="tax_code" placeholder="987654321">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="receiver_env_certificates">Environmental Certificates (comma-separated)</label>
+                                <input type="text" id="receiver_env_certificates" placeholder="ISO 14001, ISO 50001">
+                            </div>
+                        </div>
+                    </div>
 
-      <label for="aml_flag">AML Flag:</label>
-      <input type="text" id="aml_flag" name="aml_flag" lang="en" required /><br /><br />
-    </fieldset>
+                    <div class="form-actions">
+                        <button type="button" id="load-mock-data" class="btn btn-secondary">
+                            <i class="fas fa-database"></i> Load Mock Data
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-chart-line"></i> Analyze ESG Score
+                        </button>
+                    </div>
+                </form>
+            </div>
 
-    <!-- Sender Info -->
-    <fieldset>
-      <legend>Sender Info</legend>
-      <label for="sender_name">Tên người gửi:</label>
-      <input type="text" id="sender_name" name="sender_name" lang="vi" placeholder="Nhập tên tiếng Việt hoặc tiếng Anh" required /><br /><br />
+            <!-- Results Section -->
+            <div class="results-section" id="results" style="display: none;">
+                <h2><i class="fas fa-chart-bar"></i> ESG Analysis Results</h2>
+                
+                <!-- Score Overview -->
+                <div class="score-overview">
+                    <div class="score-card total-score">
+                        <div class="score-header">
+                            <h3>Total ESG Score</h3>
+                            <div class="score-value" id="total-score">7.0</div>
+                        </div>
+                        <div class="score-classification" id="classification">✅ Tốt</div>
+                    </div>
+                    
+                    <div class="score-breakdown">
+                        <div class="score-item environment">
+                            <div class="score-icon"><i class="fas fa-leaf"></i></div>
+                            <div class="score-details">
+                                <h4>Environment</h4>
+                                <div class="score-value" id="env-score">2.7</div>
+                            </div>
+                        </div>
+                        
+                        <div class="score-item social">
+                            <div class="score-icon"><i class="fas fa-users"></i></div>
+                            <div class="score-details">
+                                <h4>Social</h4>
+                                <div class="score-value" id="social-score">3.0</div>
+                            </div>
+                        </div>
+                        
+                        <div class="score-item governance">
+                            <div class="score-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="score-details">
+                                <h4>Governance</h4>
+                                <div class="score-value" id="gov-score">1.3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-      <label for="sender_kyc_status">KYC Status (sender):</label>
-      <input type="text" id="sender_kyc_status" name="sender_kyc_status" lang="en" placeholder="VD: Verified, Pending" required /><br /><br />
-    </fieldset>
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <canvas id="esg-radar-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="esg-bar-chart"></canvas>
+                    </div>
+                </div>
 
-    <!-- Receiver Info -->
-    <fieldset>
-      <legend>Receiver Info</legend>
-      <label for="receiver_name">Tên người nhận:</label>
-      <input type="text" id="receiver_name" name="receiver_name" lang="vi" placeholder="Nhập tên tiếng Việt hoặc tiếng Anh" required /><br /><br />
+                <!-- Detailed Analysis -->
+                <div class="analysis-details">
+                    <div class="analysis-card">
+                        <h3><i class="fas fa-leaf"></i> Environmental Analysis</h3>
+                        <div id="env-details"></div>
+                    </div>
+                    
+                    <div class="analysis-card">
+                        <h3><i class="fas fa-users"></i> Social Analysis</h3>
+                        <div id="social-details"></div>
+                    </div>
+                    
+                    <div class="analysis-card">
+                        <h3><i class="fas fa-shield-alt"></i> Governance Analysis</h3>
+                        <div id="gov-details"></div>
+                    </div>
+                </div>
 
-      <label for="receiver_business_type">Loại hình kinh doanh:</label>
-      <input type="text" id="receiver_business_type" name="receiver_business_type" lang="vi" placeholder="VD: Công ty TNHH, Manufacturing" required /><br /><br />
+                <!-- Report and Recommendations -->
+                <div class="report-section">
+                    <div class="report-card">
+                        <h3><i class="fas fa-file-alt"></i> Executive Summary</h3>
+                        <p id="report-text"></p>
+                    </div>
+                    
+                    <div class="recommendations-card">
+                        <h3><i class="fas fa-lightbulb"></i> Recommendations</h3>
+                        <ul id="recommendations-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-      <label for="receiver_kyc_status">KYC Status (receiver):</label>
-      <input type="text" id="receiver_kyc_status" name="receiver_kyc_status" lang="en" placeholder="VD: Verified, Pending" required /><br /><br />
-
-      <label for="receiver_environmental_certificates">Environmental Certificates (nếu có, cách nhau dấu phẩy):</label>
-      <input type="text" id="receiver_environmental_certificates" name="receiver_environmental_certificates" lang="vi" placeholder="VD: ISO 14001, Green Certificate" /><br /><br />
-
-      <label for="receiver_business_license">Business License:</label>
-      <input type="text" id="receiver_business_license" name="receiver_business_license" lang="en" required /><br /><br />
-
-      <label for="receiver_tax_code">Tax Code:</label>
-      <input type="text" id="receiver_tax_code" name="receiver_tax_code" lang="en" required /><br /><br />
-
-      <label for="receiver_company_size">Company Size:</label>
-      <input type="text" id="receiver_company_size" name="receiver_company_size" lang="en" placeholder="VD: Small, Medium, Large" required /><br /><br />
-    </fieldset>
-
-    <button type="submit">Gửi lên Backend</button>
-  </form>
-
-  <hr />
-
-  <h2>Kết quả từ Backend</h2>
-  <pre id="response-output" style="background: #f0f0f0; padding: 1em;"></pre>
-
-  <script>
-    document
-      .getElementById("esg-form")
-      .addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        // Lấy dữ liệu từ form
-        const data = {
-          transaction_data: {
-            transaction_id: document.getElementById("transaction_id").value,
-            transaction_description: document.getElementById("transaction_description").value,
-            payment_method: document.getElementById("payment_method").value,
-            amount: Number(document.getElementById("amount").value),
-            aml_flag: document.getElementById("aml_flag").value,
-          },
-          sender_info: {
-            sender_name: document.getElementById("sender_name").value,
-            kyc_status: document.getElementById("sender_kyc_status").value,
-          },
-          receiver_info: {
-            receiver_name: document.getElementById("receiver_name").value,
-            business_type: document.getElementById("receiver_business_type").value,
-            kyc_status: document.getElementById("receiver_kyc_status").value,
-            environmental_certificates: document
-              .getElementById("receiver_environmental_certificates")
-              .value
-              .split(",")
-              .map((s) => s.trim())
-              .filter((s) => s.length > 0),
-            business_license: document.getElementById("receiver_business_license").value,
-            tax_code: document.getElementById("receiver_tax_code").value,
-            company_size: document.getElementById("receiver_company_size").value,
-          },
-        };
-
-        try {
-          // Use relative URL or detect current host
-          const apiUrl = window.location.origin + "/api/esg";
-          
-          const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          });
-          const result = await response.json();
-
-          // Hiển thị kết quả trả về của backend
-          document.getElementById("response-output").textContent =
-            JSON.stringify(result, null, 2);
-        } catch (err) {
-          document.getElementById("response-output").textContent =
-            "Có lỗi khi kết nối tới backend:\n" + err;
-        }
-      });
-  </script>
+    <script src="script.js"></script>
 </body>
 </html>
